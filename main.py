@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # from socket import *
+import os
 import socket
 from termcolor import colored
 
@@ -33,6 +34,11 @@ def network_loop():
         didRecieve = clientsocket.recv(2048)
         print(didRecieve.decode())
         clientsocket.send(fabricated_success.encode())
+
+        stream = os.popen('/usr/bin/mplayer /home/pi/Music/chinese-gong-daniel_simon.wav')
+        output = stream.read()
+        # output
+
         #now do something with the clientsocket
         #in this case, we'll pretend this is a threaded server
         # ct = client_thread(clientsocket)
