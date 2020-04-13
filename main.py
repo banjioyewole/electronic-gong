@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-# from socket import *
 import os
-import socket
 from termcolor import colored
+import socket
+from http.server import BaseHTTPRequestHandler,HTTPServer
+
 
 
 def printg(str):
@@ -11,42 +12,37 @@ def printg(str):
 def printb(str):
     print(colored(str, "blue"))
 
-def network_loop():
-    serverPort = 42069
-    fabricated_success = "HTTP/1.1 200"
-    #create an INET, STREAMing socket
-    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+class ArbitrarySoundHandler(BaseHTTPRequestHandler):
 
-    #bind the socket to a public host,
-    # and a well-known port
-    serversocket.bind(('', serverPort))
-    #become a server socket
-    serversocket.listen(5)
-    printb("is listening")
-
-    while 1:
-        #accept connections from outside
-        (clientsocket, address) = serversocket.accept()
-        printb("did get from")
-        printb(address)
-
-        didRecieve = clientsocket.recv(2048)
-        print(didRecieve.decode())
-        clientsocket.send(fabricated_success.encode())
+    #Handler for the GET requests
+    def do_GET(self):
 
         stream = os.popen('/usr/bin/mplayer /home/pi/Music/chinese-gong-daniel_simon.wav')
         output = stream.read()
-        # output
 
-        #now do something with the clientsocket
-        #in this case, we'll pretend this is a threaded server
-        # ct = client_thread(clientsocket)
-        # ct.run()
-        clientsocket.close()
+        self.send_response(200)
+        self.send_header('Content-type','text/html')
+        self.end_headers()
+        # Send the html message
+        self.wfile.write("Hello World !".encode())
+        return
 
 
-    clientsocket.close()
-    serversocket.close()
+if __name__ == "__main__":
 
-network_loop()
+    PORT_NUMBER = 42069
+
+    #This class will handles any incoming request from
+    #the browser
+    try:
+    	#Create a web server and define the handler to manage the
+    	#incoming request
+    	server = HTTPServer(('', PORT_NUMBER), ArbitrarySoundHandler)
+    	print('Started httpserver on port ' , PORT_NUMBER)
+
+    	#Wait forever for incoming htto requests
+    	server.serve_forever()
+
+    except KeyboardInterrupt:
+    	print('^C received, shutting down the web server')
+    	server.socket.close()
