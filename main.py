@@ -21,13 +21,15 @@ class ArbitrarySoundHandler(BaseHTTPRequestHandler):
     #Handler for the GET requests
     def do_GET(self):
         global p
-# ... do other stuff while subprocess is running
-
-        # stream = os.popen('/usr/bin/mplayer /home/pi/Music/chinese-gong-daniel_simon.wav')
-        # output = stream.read()
+        
         if p is not None:
             p.terminate()
-        p = Popen(['/usr/bin/mplayer', '/home/pi/Music/chinese-gong-daniel_simon.wav']) # something long running
+
+        if self.path == '/chunli':
+            p = Popen(['/usr/bin/mplayer', '/home/pi/Music/chun_li_gong.mp3']) # something long running
+
+        if self.path == '/':
+            p = Popen(['/usr/bin/mplayer', '/home/pi/Music/chinese-gong-daniel_simon.wav']) # something long running
         self.send_response(200)
         self.send_header('Content-type','text/html')
         self.end_headers()
