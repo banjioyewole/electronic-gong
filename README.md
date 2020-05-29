@@ -22,3 +22,4 @@ setup route to hit localhost :42069
 
 Add to Homebride; python script chronjobs
 
+https://www.hifiberry.com/docs/software/configuring-linux-3-18-x/
